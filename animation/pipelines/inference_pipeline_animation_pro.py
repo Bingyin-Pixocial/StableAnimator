@@ -688,6 +688,7 @@ class InferenceAnimationProPipeline(DiffusionPipeline):
                 elif i >= start_refine_step and i <= end_refine_step:
                     self.vae.decoder.to(device)
                     learning_rate = eta_scheduler * (1.0 - i / len(timesteps))
+                    self.vae.decoder.cpu()
                     latents = self.scheduler.step(
                         noise_pred,
                         t,
@@ -706,7 +707,7 @@ class InferenceAnimationProPipeline(DiffusionPipeline):
                         target_face_mask_list=target_face_mask_list,
                         noise_aug_strength=noise_aug_strength,
                     )[0]
-                    self.vae.decoder.cpu()
+                    # self.vae.decoder.cpu()
 
                 if callback_on_step_end is not None:
                     callback_kwargs = {}

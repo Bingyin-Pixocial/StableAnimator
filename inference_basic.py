@@ -373,7 +373,7 @@ if __name__ == "__main__":
         tile_overlap=args.frames_overlap,
         decode_chunk_size=decode_chunk_size,
         motion_bucket_id=127.,
-        fps=7,
+        fps=29,
         min_guidance_scale=args.guidance_scale,
         max_guidance_scale=args.guidance_scale,
         noise_aug_strength=args.noise_aug_strength,

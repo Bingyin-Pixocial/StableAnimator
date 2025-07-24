@@ -204,6 +204,13 @@ def parse_args():
         required=False
     )
     parser.add_argument(
+        "--decode_chunk_size",
+        type=int,
+        default=2,
+        required=False,
+        help="Number of frames to decode at a time. Lower values use less memory but may be slower."
+    )
+    parser.add_argument(
         "--gradient_checkpointing",
         action="store_true",
         help="Whether or not to use gradient checkpointing to save memory at the expense of slower backward pass.",
@@ -371,6 +378,15 @@ if __name__ == "__main__":
         face_encoder=face_encoder,
     ).to(device=device, dtype=weight_dtype)
 
+    # insert this block, not on pipeline.unet
+    pipeline.enable_attention_slicing()
+    try:
+        pipeline.enable_xformers_memory_efficient_attention()
+    except Exception:
+    # xformers might not be installed
+        pass
+    pipeline.enable_model_cpu_offload()
+
     os.makedirs(args.output_dir, exist_ok=True)
 
     validation_image_path = args.validation_image
@@ -486,6 +502,3 @@ if __name__ == "__main__":
         img = video_frames[i]
         video_frames[i] = np.array(img)
     export_to_gif(video_frames, out_file, 8)
-
-
-
